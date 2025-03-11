@@ -12,27 +12,39 @@ public class SearchService {
 
     private final ProductItemRepository productItemRepository;
 
+    /**
+     * Constructor-based dependency injection.
+     *
+     * @param productItemRepository Injected repository for accessing product data.
+     */
     @Autowired
     public SearchService(ProductItemRepository productItemRepository) {
         this.productItemRepository = productItemRepository;
     }
 
     /**
-     * RESTORED `search` method for compatibility with controllers.
+     * Searches for products by name or description.
+     *
+     * @param query The search term.
+     * @return List of matching products or an empty list if none found.
      */
-    public List<ProductItem> search(String query) {  // ✅ Restored
+    public List<ProductItem> search(String query) {  // 🔹 Renamed from `searchProducts()` to `search()`
         if (query == null || query.trim().isEmpty()) {
             return Collections.emptyList();
         }
 
         query = query.trim();
         boolean exactMatch = query.startsWith("\"") && query.endsWith("\"");
+
         query = query.replace("\"", "").trim();
 
+        List<ProductItem> results;
         if (exactMatch) {
-            return productItemRepository.findByNameIgnoreCaseOrDescriptionIgnoreCase(query, query);
+            results = productItemRepository.findByNameIgnoreCaseOrDescriptionIgnoreCase(query, query);
         } else {
-            return productItemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+            results = productItemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
         }
+
+        return results.isEmpty() ? Collections.emptyList() : results;
     }
 }
