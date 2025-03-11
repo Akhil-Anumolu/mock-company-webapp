@@ -1,17 +1,16 @@
-name: CI Pipeline
+name: CI Build and Test
 
 on:
   push:
     branches:
-      - master  # Runs CI when code is pushed to the master branch
+      - master  # Runs CI when changes are pushed to master
   pull_request:
     branches:
-      - master
+      - master  # Runs CI when PRs are created
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest  # Uses GitHub's Ubuntu VM
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -22,10 +21,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Grant Execute Permission for Gradlew
+      - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew
 
-      - name: Build Project
+      - name: Build the Application
         run: ./gradlew assemble
 
       - name: Run Tests
