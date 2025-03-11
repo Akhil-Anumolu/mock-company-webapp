@@ -36,5 +36,5 @@ public class SearchService {
     }
 }
 //changes detect
-// Triggering Git to detect changes
+// Triggering Git to detect changes// Added a new line to force Git detection
 
