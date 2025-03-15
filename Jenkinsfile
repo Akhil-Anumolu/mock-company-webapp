@@ -6,20 +6,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    echo '📥 Checking out the repository...'
+                    checkout scm
+                }
             }
         }
         stage('Build') {
             steps {
                 script {
-                    sh './gradlew assemble'
+                    echo '🔨 Building the application...'
+                    sh './gradlew clean assemble'
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
+                    echo '🧪 Running tests...'
                     sh './gradlew test'
+                }
+            }
+        }
+        stage('Test Report') {
+            steps {
+                script {
+                    echo '📊 Generating test reports...'
+                    junit '**/build/test-results/test/TEST-*.xml'
                 }
             }
         }
@@ -29,7 +42,10 @@ pipeline {
             echo '✅ Build and tests passed successfully!'
         }
         failure {
-            echo '❌ Build or tests failed!'
+            echo '❌ Build or tests failed! Check logs for details.'
+            script {
+                sh 'exit 1' // Force failure in case of silent errors
+            }
         }
     }
 }
