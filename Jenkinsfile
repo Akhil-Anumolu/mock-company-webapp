@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        gradle 'Gradle-8.13'  // Auto-installs Gradle
+        gradle 'Gradle-8.13'  // Ensure it's properly configured in Jenkins
     }
     environment {
         GRADLE_USER_HOME = "${WORKSPACE}/.gradle"
@@ -10,14 +10,22 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh './gradlew assemble'
+                    if (isUnix()) {
+                        sh './gradlew assemble'
+                    } else {
+                        bat 'gradlew.bat assemble'
+                    }
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    sh './gradlew test'
+                    if (isUnix()) {
+                        sh './gradlew test'
+                    } else {
+                        bat 'gradlew.bat test'
+                    }
                 }
             }
         }
