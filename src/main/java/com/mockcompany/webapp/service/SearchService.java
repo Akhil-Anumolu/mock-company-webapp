@@ -23,13 +23,29 @@ public class SearchService {
     }
 
     /**
+     * **✅ Restored Correct Functionality**
      * Searches for products by name or description.
      *
      * @param query The search term.
      * @return List of matching products or an empty list if none found.
      */
     public List<ProductItem> search(String query) {
-        return Collections.emptyList(); // ❌ This will break tests intentionally
+        if (query == null || query.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        query = query.trim();
+        boolean exactMatch = query.startsWith("\"") && query.endsWith("\"");
+
+        query = query.replace("\"", "").trim();
+
+        List<ProductItem> results;
+        if (exactMatch) {
+            results = productItemRepository.findByNameIgnoreCaseOrDescriptionIgnoreCase(query, query);
+        } else {
+            results = productItemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+        }
+
+        return results.isEmpty() ? Collections.emptyList() : results;
     }
 }
-//blankline
